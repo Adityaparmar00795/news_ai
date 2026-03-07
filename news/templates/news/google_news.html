@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="min-h-screen bg-black text-white px-6 py-12">
+
+  <div class="max-w-6xl mx-auto">
+
+```
+<h1 class="text-4xl font-bold mb-10 tracking-tight">
+  📰 Live Google News
+</h1>
+
+<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+  {% for article in articles %}
+
+  <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden hover:border-blue-500 transition duration-300 hover:shadow-lg hover:shadow-blue-500/20">
+
+    {% if article.image %}
+    <img src="{{ article.image }}" class="w-full h-44 object-cover">
+    {% endif %}
+
+    <div class="p-5">
+
+      <h2 class="text-lg font-semibold leading-snug mb-3 line-clamp-3">
+        {{ article.title }}
+      </h2>
+
+      <p class="text-zinc-400 text-sm mb-4">
+        {{ article.published }}
+      </p>
+
+      <a href="/article/?url={{ article.link }}" 
+         
+         class="inline-flex items-center text-blue-400 hover:text-blue-300 font-medium">
+         Read article →
+      </a>
+
+    </div>
+
+  </div>
+
+  {% endfor %}
+
+</div>
+```
+
+  </div>
+
+</div>
+
+{% endblock %}

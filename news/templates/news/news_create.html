@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Create News{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen flex items-center justify-center bg-black px-4">
+
+    <div class="w-full max-w-lg bg-gray-900 rounded-xl shadow-lg p-8">
+
+        <h2 class="text-2xl font-bold text-white mb-6 text-center">
+            Create News
+        </h2>
+
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- TEXT FIELD -->
+            <div>
+                <label class="block text-sm text-gray-300 mb-2">
+                    Text
+                </label>
+                <textarea name="text"
+                    class="w-full bg-gray-800 text-white border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    rows="4"></textarea>
+            </div>
+
+            <!-- IMAGE FIELD -->
+            <div>
+                <label class="block text-sm text-gray-300 mb-2">
+                    Upload Image
+                </label>
+
+                <input type="file" name="photo"
+                    class="w-full text-white bg-gray-800 border border-gray-600 rounded-lg p-2">
+            </div>
+
+            <!-- SUBMIT -->
+            <button type="submit"
+                class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
+                Save
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

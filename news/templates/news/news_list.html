@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static tailwind_tags %}
+
+{% block title %}News{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto mt-10 px-6">
+
+    <h1 class="text-3xl font-bold mb-6">
+        Welcome to News AI
+    </h1>
+
+    <a href="{% url 'news_create' %}"
+       class="inline-block mb-8 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+        Create News
+    </a>
+    <a href="{% url 'google_news' %}" 
+class="inline-block mb-8 bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 transition">
+
+Google News
+
+</a>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+
+        {% for item in news %}
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+
+            {% if item.photo %}
+            <div class="h-40 w-full overflow-hidden">
+                <img src="{{ item.photo.url }}"
+                     class="w-full h-full object-cover"
+                     alt="news image">
+            </div>
+            {% endif %}
+
+            <div class="p-4">
+                <p class="text-gray-700 text-sm">
+                    {{ item.text|truncatechars:80 }}
+                </p>
+            </div>
+
+            <div class="flex justify-between px-4 pb-4">
+                <a href="{% url 'news_edit' item.id %}"
+                   class="bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700 transition">
+                    Edit
+                </a>
+
+                <a href="{% url 'news_delete' item.id %}"
+                   class="bg-red-600 text-white text-sm px-3 py-1 rounded hover:bg-red-700 transition">
+                    Delete
+                </a>
+            </div>
+
+        </div>
+        {% empty %}
+            <p class="text-white">No news available.</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
