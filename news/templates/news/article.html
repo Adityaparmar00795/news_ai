@@ -2,128 +2,225 @@
 
 {% block content %}
 
-<div class="min-h-screen bg-black text-white px-6 py-10">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap');
 
-  <div class="max-w-4xl mx-auto">
+body{
+    font-family: 'Merriweather', serif;
+}
 
-```
+.newspaper {
+    background: #f5f5f5;
+    color: #111;
+    border: 2px solid #000;
+    padding: 40px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
 
-<h1 class="text-4xl font-bold leading-tight mb-6">
-  {{ article.title }}
-</h1>
+.news-title{
+    font-size: 42px;
+    font-weight: 700;
+    text-align: center;
+    border-bottom: 3px double black;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+}
+
+.article-text{
+    font-size: 18px;
+    line-height: 1.9;
+    column-count: 2;
+    column-gap: 40px;
+}
+
+.article-text p:first-letter{
+    font-size: 55px;
+    float: left;
+    line-height: 45px;
+    padding-right: 8px;
+    font-weight: bold;
+}
+
+.btn-newspaper{
+    background: #111;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.btn-newspaper:hover{
+    background: #8b0000;
+}
+
+.summary-box{
+    background: white;
+    border-left: 5px solid #000;
+    padding: 15px;
+}
+
+.chatbox{
+    background: #f5f5f5;
+    border: 2px solid black;
+}
+
+/* Toggle button */
+.chat-toggle-btn {
+    background: #111;
+    color: white;
+    border: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.chat-toggle-btn:hover {
+    background: #8b0000;
+}
+
+/* Chat panel slide animation */
+.chat-panel {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform-origin: bottom right;
+}
+
+.chat-panel.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.95) translateY(8px);
+}
+
+.chat-panel.visible {
+    opacity: 1;
+    pointer-events: all;
+    transform: scale(1) translateY(0);
+}
+</style>
 
 
-{% if article.image %}
-<div class="mb-8">
-  <img src="{{ article.image }}" class="rounded-xl shadow-lg w-full">
+<div class="min-h-screen px-6 py-10">
+
+    <div class="max-w-6xl mx-auto newspaper">
+
+        <h1 class="news-title">{{ article.title }}</h1>
+
+        {% if article.image %}
+        <div class="mb-8">
+            <img src="{{ article.image }}" class="rounded w-full border border-black">
+        </div>
+        {% endif %}
+
+        <button onclick="summarizeArticle()" class="btn-newspaper">Summarize Article</button>
+
+        <div id="summary-box" class="summary-box mb-6 hidden"></div>
+
+        <div class="article-text space-y-4">
+            {{ article.text|linebreaks }}
+        </div>
+
+        <div class="mt-10 text-center">
+            <a href="{% url 'google_news' %}" class="btn-newspaper">← Back to News</a>
+        </div>
+
+    </div>
 </div>
-{% endif %}
-
-<button onclick="summarizeArticle()" 
-class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg mb-6">
-Summarize Article
-</button>
-
-<div id="summary-box" class="bg-gray-900 text-gray-200 p-4 rounded-lg mb-6 hidden"></div>
 
 
-<div class="text-lg leading-relaxed text-gray-300 space-y-4">
-
-  {{ article.text|linebreaks }}
-
-</div>
-
-
-<div class="mt-10">
-  <a href="{% url 'google_news' %}" 
-  class="inline-block bg-blue-600 px-5 py-2 rounded-lg hover:bg-blue-700 transition">
-
-    ← Back to News
-
-  </a>
-</div>
-```
-
-  </div>
-
-</div>
 <!-- AI Chatbot -->
-<div class="fixed bottom-6 right-6 w-80 bg-gray-900 text-white rounded-xl shadow-lg">
+<div class="fixed bottom-6 right-6 flex flex-col items-end gap-3">
 
-    <div class="p-3 border-b border-gray-700 font-semibold">
-        AI News Assistant
+   
+    <div id="chat-panel" class="chat-panel hidden w-80 chatbox rounded">
+
+        <div class="p-3 border-b border-black font-semibold text-center flex justify-between items-center">
+            <span>AI News Assistant</span>
+            <button onclick="toggleChat()" class="text-lg leading-none hover:text-red-800">&times;</button>
+        </div>
+
+        <div id="chat-box" class="p-3 h-60 overflow-y-auto text-sm space-y-2"></div>
+
+        <div class="flex border-t border-black">
+            <input
+                id="chat-input"
+                class="flex-1 bg-white p-2 outline-none text-sm"
+                placeholder="Ask about this article..."
+                onkeydown="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()" class="px-3 font-bold">Send</button>
+        </div>
+
     </div>
 
-    <div id="chat-box" class="p-3 h-60 overflow-y-auto text-sm space-y-2">
-    </div>
-
-    <div class="flex border-t border-gray-700">
-
-        <input 
-        id="chat-input"
-        class="flex-1 bg-gray-900 p-2 outline-none text-sm"
-        placeholder="Ask about this article...">
-
-        <button onclick="sendMessage()" class="px-3 text-blue-400">
-            Send
-        </button>
-
-    </div>
+    
+    <button onclick="toggleChat()" class="chat-toggle-btn" id="chat-toggle-btn" title="Toggle AI Assistant">
+        💬
+    </button>
 
 </div>
 
 
 <script>
 
-function summarizeArticle() {
+let chatOpen = false;
 
+function toggleChat() {
+    const panel = document.getElementById("chat-panel");
+    chatOpen = !chatOpen;
+
+    if (chatOpen) {
+        panel.classList.remove("hidden");
+        // Small delay so the transition plays after display kicks in
+        requestAnimationFrame(() => panel.classList.add("visible"));
+        document.getElementById("chat-input").focus();
+    } else {
+        panel.classList.remove("visible");
+        // Wait for transition to finish before hiding
+        setTimeout(() => panel.classList.add("hidden"), 200);
+    }
+}
+
+function summarizeArticle() {
     const urlParams = new URLSearchParams(window.location.search);
     const articleUrl = urlParams.get("url");
 
     fetch(`/summarize/?url=${articleUrl}`)
-    .then(response => response.json())
-    .then(data => {
-
-        const box = document.getElementById("summary-box");
-
-        box.innerHTML = "<strong>AI Summary:</strong><br>" + data.summary;
-
-        box.classList.remove("hidden");
-
-    });
-
+        .then(response => response.json())
+        .then(data => {
+            const box = document.getElementById("summary-box");
+            box.innerHTML = "<strong>AI Summary:</strong><br>" + data.summary;
+            box.classList.remove("hidden");
+        });
 }
-
-
-
 
 function sendMessage() {
+    const input = document.getElementById("chat-input");
+    const chatBox = document.getElementById("chat-box");
+    const question = input.value;
 
-    const input = document.getElementById("chat-input")
-    const chatBox = document.getElementById("chat-box")
+    if (!question) return;
 
-    const question = input.value
+    chatBox.innerHTML += `<div><strong>You:</strong> ${question}</div>`;
 
-    if (!question) return
-
-    chatBox.innerHTML += `<div class="text-blue-400">You: ${question}</div>`
-
-    const urlParams = new URLSearchParams(window.location.search)
-    const articleUrl = urlParams.get("url")
+    const urlParams = new URLSearchParams(window.location.search);
+    const articleUrl = urlParams.get("url");
 
     fetch(`/ask-ai/?url=${articleUrl}&question=${question}`)
-    .then(res => res.json())
-    .then(data => {
+        .then(res => res.json())
+        .then(data => {
+            chatBox.innerHTML += `<div><strong>AI:</strong> ${data.answer}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
 
-        chatBox.innerHTML += `<div class="text-green-400">AI: ${data.answer}</div>`
-
-        chatBox.scrollTop = chatBox.scrollHeight
-
-    })
-
-    input.value = ""
-
+    input.value = "";
 }
+
 </script>
 
 {% endblock %}

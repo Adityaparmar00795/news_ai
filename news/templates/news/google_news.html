@@ -2,51 +2,193 @@
 
 {% block content %}
 
-<div class="min-h-screen bg-black text-white px-6 py-12">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap');
 
-  <div class="max-w-6xl mx-auto">
+* { box-sizing: border-box; }
 
-```
-<h1 class="text-4xl font-bold mb-10 tracking-tight">
-  📰 Live Google News
-</h1>
+body {
+    background: #f5f5f5;
+    color: #111;
+    font-family: 'Merriweather', serif;
+}
 
-<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+.page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+}
 
-  {% for article in articles %}
+/* ── HEADER ── */
+.page-header {
+    border-top: 4px solid #111;
+    border-bottom: 1px solid #111;
+    padding: 18px 0 14px;
+    margin-bottom: 32px;
+    text-align: center;
+}
 
-  <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden hover:border-blue-500 transition duration-300 hover:shadow-lg hover:shadow-blue-500/20">
+.page-title {
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+}
 
-    {% if article.image %}
-    <img src="{{ article.image }}" class="w-full h-44 object-cover">
-    {% endif %}
+.page-subtitle {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #555;
+    margin-top: 4px;
+}
 
-    <div class="p-5">
+/* ── GRID ── */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+}
 
-      <h2 class="text-lg font-semibold leading-snug mb-3 line-clamp-3">
-        {{ article.title }}
-      </h2>
+/* ── CARD ── */
+.article-card {
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    padding: 20px 18px;
+    background: #fff;
+    transition: background 0.2s;
+}
 
-      <p class="text-zinc-400 text-sm mb-4">
-        {{ article.published }}
-      </p>
+.article-card:hover {
+    background: #fafafa;
+}
 
-      <a href="/article/?url={{ article.link }}" 
-         
-         class="inline-flex items-center text-blue-400 hover:text-blue-300 font-medium">
-         Read article →
-      </a>
+/* First card spans full width */
+.article-card:first-child {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: start;
+    border-bottom: 2px solid #111;
+    padding: 24px 20px;
+}
 
+.article-card:first-child .card-headline {
+    font-size: 28px;
+    line-height: 1.2;
+}
+
+/* ── IMAGE ── */
+.card-image img {
+    width: 100%;
+    display: block;
+    filter: grayscale(100%);
+    border: 1px solid #ddd;
+    margin-bottom: 8px;
+}
+
+/* ── TEXT ── */
+.card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #555;
+    border-top: 2px solid #111;
+    display: inline-block;
+    padding-top: 4px;
+    margin-bottom: 10px;
+}
+
+.card-headline {
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1.25;
+    margin-bottom: 10px;
+    color: #111;
+}
+
+.card-date {
+    font-size: 11px;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+.card-link {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111;
+    text-decoration: none;
+    border-bottom: 1px solid #111;
+    padding-bottom: 1px;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.card-link:hover {
+    color: #444;
+    border-color: #444;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .news-grid { grid-template-columns: 1fr; }
+    .article-card:first-child {
+        grid-column: 1;
+        grid-template-columns: 1fr;
+    }
+    .article-card:first-child .card-headline { font-size: 22px; }
+}
+</style>
+
+
+<div class="page">
+
+    <div class="page-header">
+        <div class="page-title">📰 Live Google News</div>
+        <div class="page-subtitle">Latest headlines — updated continuously</div>
     </div>
 
-  </div>
+    <div class="news-grid">
 
-  {% endfor %}
+        {% for article in articles %}
 
-</div>
-```
+        <article class="article-card">
 
-  </div>
+            {% if article.image %}
+            <div class="card-image">
+                <img src="{{ article.image }}" alt="{{ article.title }}">
+            </div>
+            {% endif %}
+
+            <div class="card-text">
+
+                <span class="card-label">
+                    {% cycle 'World' 'Politics' 'Business' 'Technology' 'Science' 'Culture' %}
+                </span>
+
+                <h2 class="card-headline">{{ article.title }}</h2>
+
+                {% if article.published %}
+                <p class="card-date">{{ article.published }}</p>
+                {% endif %}
+
+                <a href="/article/?url={{ article.link }}" class="card-link">
+                    Read article →
+                </a>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
 
 </div>
 

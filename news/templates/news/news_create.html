@@ -4,47 +4,121 @@
 
 {% block content %}
 
-<div class="min-h-screen flex items-center justify-center bg-black px-4">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap');
 
-    <div class="w-full max-w-lg bg-gray-900 rounded-xl shadow-lg p-8">
+* { box-sizing: border-box; }
 
-        <h2 class="text-2xl font-bold text-white mb-6 text-center">
-            Create News
-        </h2>
+body {
+    background: #f5f5f5;
+    color: #111;
+    font-family: 'Merriweather', serif;
+}
 
-        <form method="post" enctype="multipart/form-data" class="space-y-6">
+.page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+}
+
+.form-card {
+    width: 100%;
+    max-width: 520px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-top: 4px solid #111;
+    padding: 36px 32px 40px;
+}
+
+.form-title {
+    font-size: 26px;
+    font-weight: 900;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 16px;
+    margin-bottom: 28px;
+    letter-spacing: -0.5px;
+}
+
+.field {
+    margin-bottom: 22px;
+}
+
+label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #555;
+    border-top: 2px solid #111;
+    padding-top: 4px;
+    margin-bottom: 10px;
+}
+
+textarea, input[type="file"] {
+    width: 100%;
+    background: #fafafa;
+    border: 1px solid #ccc;
+    color: #111;
+    padding: 10px 12px;
+    font-family: 'Merriweather', serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+textarea:focus, input[type="file"]:focus {
+    border-color: #111;
+}
+
+textarea { rows: 4; resize: vertical; }
+
+button[type="submit"] {
+    width: 100%;
+    background: #111;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    font-family: 'Merriweather', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 6px;
+}
+
+button[type="submit"]:hover {
+    background: #333;
+}
+</style>
+
+<div class="page">
+    <div class="form-card">
+
+        <h2 class="form-title">Create News</h2>
+
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-            <!-- TEXT FIELD -->
-            <div>
-                <label class="block text-sm text-gray-300 mb-2">
-                    Text
-                </label>
-                <textarea name="text"
-                    class="w-full bg-gray-800 text-white border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    rows="4"></textarea>
+            <div class="field">
+                <label>Text</label>
+                <textarea name="text" rows="4"></textarea>
             </div>
 
-            <!-- IMAGE FIELD -->
-            <div>
-                <label class="block text-sm text-gray-300 mb-2">
-                    Upload Image
-                </label>
-
-                <input type="file" name="photo"
-                    class="w-full text-white bg-gray-800 border border-gray-600 rounded-lg p-2">
+            <div class="field">
+                <label>Upload Image</label>
+                <input type="file" name="photo">
             </div>
 
-            <!-- SUBMIT -->
-            <button type="submit"
-                class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
-                Save
-            </button>
-
+            <button type="submit">Save</button>
         </form>
 
     </div>
-
 </div>
 
 {% endblock %}

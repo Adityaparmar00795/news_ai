@@ -5,57 +5,194 @@
 
 {% block content %}
 
-<div class="max-w-7xl mx-auto mt-10 px-6">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap');
 
-    <h1 class="text-3xl font-bold mb-6">
-        Welcome to News AI
-    </h1>
+* { box-sizing: border-box; }
 
-    <a href="{% url 'news_create' %}"
-       class="inline-block mb-8 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
-        Create News
-    </a>
-    <a href="{% url 'google_news' %}" 
-class="inline-block mb-8 bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 transition">
+body {
+    background: #f5f5f5;
+    color: #111;
+    font-family: 'Merriweather', serif;
+}
 
-Google News
+.page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+}
 
-</a>
+.page-header {
+    border-top: 4px solid #111;
+    border-bottom: 1px solid #111;
+    padding: 18px 0 14px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+}
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+.page-title {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn {
+    font-family: 'Merriweather', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 9px 18px;
+    border: 1px solid #111;
+    color: #111;
+    background: #fff;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #111;
+    color: #fff;
+}
+
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+}
+
+.news-card {
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    background: #fff;
+    transition: background 0.2s;
+}
+
+.news-card:hover {
+    background: #fafafa;
+}
+
+.card-image {
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+    border-bottom: 1px solid #ccc;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.card-body {
+    padding: 16px;
+}
+
+.card-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #555;
+    border-top: 2px solid #111;
+    display: inline-block;
+    padding-top: 3px;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #333;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-top: 1px solid #eee;
+}
+
+.card-actions a {
+    font-family: 'Merriweather', serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #111;
+    border-bottom: 1px solid #111;
+    padding-bottom: 1px;
+    transition: color 0.2s;
+}
+
+.card-actions a.delete-link:hover { color: #8b0000; border-color: #8b0000; }
+.card-actions a.edit-link:hover   { color: #444; border-color: #444; }
+
+.empty-state {
+    grid-column: 1 / -1;
+    padding: 48px;
+    text-align: center;
+    font-size: 14px;
+    color: #777;
+    font-style: italic;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+@media (max-width: 1024px) { .news-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px)  { .news-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .news-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div class="page">
+
+    <div class="page-header">
+        <h1 class="page-title">News AI</h1>
+        <div class="header-actions">
+            <a href="{% url 'news_create' %}" class="btn">+ Create News</a>
+            <a href="{% url 'google_news' %}" class="btn">Google News</a>
+        </div>
+    </div>
+
+    <div class="news-grid">
 
         {% for item in news %}
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="news-card">
 
             {% if item.photo %}
-            <div class="h-40 w-full overflow-hidden">
-                <img src="{{ item.photo.url }}"
-                     class="w-full h-full object-cover"
-                     alt="news image">
+            <div class="card-image">
+                <img src="{{ item.photo.url }}" alt="news image">
             </div>
             {% endif %}
 
-            <div class="p-4">
-                <p class="text-gray-700 text-sm">
-                    {{ item.text|truncatechars:80 }}
-                </p>
+            <div class="card-body">
+                <span class="card-label">{% cycle 'World' 'Politics' 'Business' 'Technology' 'Science' 'Culture' %}</span>
+                <p class="card-text">{{ item.text|truncatechars:80 }}</p>
             </div>
 
-            <div class="flex justify-between px-4 pb-4">
-                <a href="{% url 'news_edit' item.id %}"
-                   class="bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700 transition">
-                    Edit
-                </a>
-
-                <a href="{% url 'news_delete' item.id %}"
-                   class="bg-red-600 text-white text-sm px-3 py-1 rounded hover:bg-red-700 transition">
-                    Delete
-                </a>
+            <div class="card-actions">
+                <a href="{% url 'news_edit' item.id %}" class="edit-link">Edit</a>
+                <a href="{% url 'news_delete' item.id %}" class="delete-link">Delete</a>
             </div>
 
         </div>
         {% empty %}
-            <p class="text-white">No news available.</p>
+            <div class="empty-state">No news available.</div>
         {% endfor %}
 
     </div>
